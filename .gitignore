@@ -14,6 +14,9 @@
 # Output files from R CMD check
 /*.Rcheck/
 
+# R project files
+*.Rproj
+
 # RStudio files
 .Rproj.user/
 
@@ -39,3 +42,4 @@
 # R Environment Variables
 .Renviron
 
+.Rproj.user
