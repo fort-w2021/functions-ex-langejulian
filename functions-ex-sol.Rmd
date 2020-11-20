@@ -1,0 +1,71 @@
+### Solution functions-ex ###
+
+a)
+```{r, 1a, eval=FALSE}
+set.seed(20141012)
+x <- sample(x = c(1:10, NA), size = 20, replace = TRUE)
+y <- runif(n = 20, min = 0, max = 1) # die hinteren beiden Argumente sind gleich den defaults, könnte man sich also sparen
+cor(x = x, y = y, use = "pairwise.complete.obs", method = "kendall")
+```
+
+b)
+Die Funktion `f1()` gibt den Wert 3 zurück. Bei der Operation `x + y` wird zuerst das
+Argument `x` aufgesucht und ausgewertet. In diesem wird der Variable `y` der Wert
+1 zugeordnet, welcher dann für die Berechnung verwendet wird. Das Argument `y = 0`
+wird also gar nicht ausgewertet/benutzt.  
+Ersetzt man die letzte Zeile durch `y + x` wird zuerst das Argument `y` aufgesucht,
+welches in der Funktionsdefinition auf 0 gesetzt ist und damit in der Rechenoperation
+diesen Wert bekommt. Erst danach wird das Argument `x` gesucht und ausgewertet. 
+Dadurch ergibt sich die Rechnung `0 + 2` die Funktion dann den Wert 2 zurück.  
+Allerdings wird mit der Auswertung vom Argument `x` auch `y` wieder auf den Wert 
+1 gesetzt, wodurch die Funktion bei Ersetzen der letzten Zeile durch `c(y, x, y)`
+einen Vektor mit den Elementen `0, 2, 1` zurückgibt.
+
+c)
+Die Funktion `f2()` gibt den Wert 100 zurück und illustriert das Prinzip der "Lazy 
+evaluation", da das Argument `x` erst ausgewertet wird, wenn es das erste Mal
+benutzt wird. Dadurch ist es kein Problem, dass das Argument `x = z` zu Beginn
+der Funktion undefiniert ist: Wenn es in der zweiten Zeile das erste Mal benutzt
+wird, wurde in der ersten Zeile `z` bereits auf den Wert 100 festgesetzt, welcher 
+dann wiederum bei der Auswertung von `x` in der zweiten Zeile verwendet werden kann.
+
+d)
+```{r, d}
+# infix function implementing exclusive OR for logical inputs (scalars or vectors)
+`%xor%` <- function(x, y) {
+  # checking inputs
+  checkmate::assert_logical(x)
+  checkmate::assert_logical(y)
+
+  (x & !y) | (y & !x)
+}
+```
+
+e)
+Der Zustand von `options()`kann mit ebendiesem Befehl auch abgespeichert werden, 
+z.B. `old_options <- options()`. Wiederherstellen lässt sich dieser Zustand dann
+mit `options(old_options)`.  
+Der Zustand von `par()` kann mit `par(no.readonly = TRUE)` abgespeichert werden, 
+z.B. `old_par <- par(no.readonly = TRUE)`. Wiederherstellen lässt sich dieser 
+Zustand dann mit `par(old_par)`.  
+In einer Funktion lassen sich solche Wiederherstellungen mit `on.exit()` einfach
+implementieren, womit die entsprechenden Aufrufe ausgeführt werden, sobald die 
+Funktionsauswertung beendet ist.
+
+f)
+```{r, f}
+# function that opens a new pdf graphics device, plots something and then closes the device
+plot_and_reset <- function(...) {
+  on.exit(dev.off())
+  
+  pdf()
+  plot(...)
+}
+```
+
+g)
+`c(c = c)` gibt einen Vektor mit einem Eintrag mit dem Namen "c" und dem Wert 10
+zurück. Das erste `c` bezieht sich auf die base-Funktion `c()`, welche Argumente
+kombiniert/zusammenführt und hier einen Vektor erzeugt. Das zweite `c` gibt dem Objekt
+den Namen, den das Objekt im Vektor haben soll und das dritte `c` bezieht sich auf
+die in der vorherigen Zeile definierte Variable mit dem Wert 10.
